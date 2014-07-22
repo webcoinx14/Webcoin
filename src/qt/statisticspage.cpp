@@ -25,7 +25,6 @@ StatisticsPage::StatisticsPage(QWidget *parent) :
 int heightPrevious = -1;
 int connectionPrevious = -1;
 int volumePrevious = -1;
-double rewardPrevious = -1;
 double netPawratePrevious = -1;
 double pawratePrevious = -1;
 double hardnessPrevious = -1;
@@ -33,7 +32,7 @@ double hardnessPrevious2 = -1;
 int stakeminPrevious = -1;
 int stakemaxPrevious = -1;
 QString stakecPrevious = "";
-
+QString rewardPrevious = "";
 
 void StatisticsPage::updateStatistics()
 {
@@ -42,7 +41,6 @@ void StatisticsPage::updateStatistics()
     int pPawrate = GetPoWMHashPS();
     double pPawrate2 = 0.000;
     int nHeight = pindexBest->nHeight;
-    double nSubsidy = 500;
     uint64_t nMinWeight = 0, nMaxWeight = 0, nWeight = 0;
     pwalletMain->GetStakeWeight(*pwalletMain, nMinWeight, nMaxWeight, nWeight);
     uint64_t nNetworkWeight = GetPoSKernelPS();
@@ -62,7 +60,39 @@ void StatisticsPage::updateStatistics()
         phase = "POS";
     }
 
-    QString subsidy = QString::number(nSubsidy, 'f', 6);
+    QString subsidy = "";
+	if(pindexBest->nHeight < 1500)
+    {
+		subsidy = "500 WEB";
+    }
+	else if(pindexBest->nHeight < 3100)
+    {
+		subsidy = "400 WEB";
+    }
+		else if(pindexBest->nHeight < 4500)
+    {
+		subsidy = "200 WEB";
+    }
+		else if(pindexBest->nHeight < 6000)
+    {
+		subsidy = "100 WEB";
+    }
+		else if(pindexBest->nHeight < 7400)
+    {
+		subsidy = "50 WEB";
+    }
+		else if(pindexBest->nHeight < 8900)
+    {
+		subsidy = "25 WEB";
+    }
+		else if(pindexBest->nHeight < 10300)
+    {
+		subsidy = "10 WEB";
+    }
+		else if(pindexBest->nHeight < 11100)
+    {
+		subsidy = "1 WEB";
+    }
     QString hardness = QString::number(pHardness, 'f', 6);
     QString hardness2 = QString::number(pHardness2, 'f', 6);
     QString pawrate = QString::number(pPawrate2, 'f', 3);
@@ -97,11 +127,10 @@ void StatisticsPage::updateStatistics()
     } else {
     ui->cBox->setText(phase);
     }
-
     
-    if(nSubsidy < rewardPrevious)
+    if(subsidy != rewardPrevious)
     {
-        ui->rewardBox->setText("<b><font color=\"red\">" + subsidy + "</font></b>");
+        ui->rewardBox->setText("<b><font color=\"green\">" + subsidy + "</font></b>");
     } else {
     ui->rewardBox->setText(subsidy);
     }
@@ -157,16 +186,16 @@ void StatisticsPage::updateStatistics()
     } else {
         ui->volumeBox->setText(qVolume + " WEB");
     }
-    updatePrevious(nHeight, nMinWeight, nNetworkWeight, phase, nSubsidy, pHardness, pHardness2, pPawrate2, Qlpawrate, peers, volume);
+    updatePrevious(nHeight, nMinWeight, nNetworkWeight, phase, subsidy, pHardness, pHardness2, pPawrate2, Qlpawrate, peers, volume);
 }
 
-void StatisticsPage::updatePrevious(int nHeight, int nMinWeight, int nNetworkWeight, QString phase, double nSubsidy, double pHardness, double pHardness2, double pPawrate2, QString Qlpawrate, int peers, int volume)
+void StatisticsPage::updatePrevious(int nHeight, int nMinWeight, int nNetworkWeight, QString phase, QString subsidy, double pHardness, double pHardness2, double pPawrate2, QString Qlpawrate, int peers, int volume)
 {
     heightPrevious = nHeight;
     stakeminPrevious = nMinWeight;
     stakemaxPrevious = nNetworkWeight;
     stakecPrevious = phase;
-    rewardPrevious = nSubsidy;
+    rewardPrevious = subsidy;
     hardnessPrevious = pHardness;
     hardnessPrevious2 = pHardness2;
     netPawratePrevious = pPawrate2;
